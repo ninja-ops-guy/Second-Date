@@ -1,3 +1,6 @@
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("./sw-pages.js").catch(() => undefined);
+}
 (() => {
   if (document.body.dataset.page !== "app") return;
 
