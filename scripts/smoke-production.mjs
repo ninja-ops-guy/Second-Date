@@ -1,1 +1,39 @@
-const base = process.env.SECOND_DATE_URL;\nif (!base) {\n  console.error("SECOND_DATE_URL is required, e.g. https://second-date.example");\n  process.exit(2);\n}\n\nconst root = base.replace(/\\\/$/, "");\nconst checks = [\n  ["/", 200],\n  ["/app", 200],\n  ["/privacy", 200],\n  ["/terms", 200],\n  ["/api/health", 200],\n  ["/api/readiness", 200],\n];\n\nlet failed = false;\nfor (const [path, expected] of checks) {\n  try {\n    const response = await fetch(root + path, { redirect: "follow" });\n    const ok = response.status === expected;\n    console.log(`${ok ? "PASS" : "FAIL"} ${path} -> ${response.status}`);\n    if (!ok) {\n      failed = true;\n      if (path === "/api/readiness") {\n        try { console.log(await response.text()); } catch {}\n      }\n    }\n  } catch (error) {\n    failed = true;\n    console.log(`FAIL ${path} -> ${error instanceof Error ? error.message : String(error)}`);\n  }\n}\n\nprocess.exit(failed ? 1 : 0);\n
+const base = process.env.SECOND_DATE_URL;
+if (!base) {
+  console.error("SECOND_DATE_URL is required, e.g. https://second-date.example");
+  process.exit(2);
+}
+
+const root = base.replace(/\/$/, "");
+const checks = [
+  ["/", 200],
+  ["/app", 200],
+  ["/privacy", 200],
+  ["/terms", 200],
+  ["/api/health", 200],
+  ["/api/readiness", 200],
+];
+
+let failed = false;
+for (const [path, expected] of checks) {
+  try {
+    const response = await fetch(root + path, { redirect: "follow" });
+    const ok = response.status === expected;
+    console.log(`${ok ? "PASS" : "FAIL"} ${path} -> ${response.status}`);
+    if (!ok) {
+      failed = true;
+      if (path === "/api/readiness") {
+        try {
+          console.log(await response.text());
+        } catch {
+          // Best-effort diagnostic output.
+        }
+      }
+    }
+  } catch (error) {
+    failed = true;
+    console.log(`FAIL ${path} -> ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+process.exit(failed ? 1 : 0);
