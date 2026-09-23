@@ -4,9 +4,12 @@ import { items } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import { trackEvent } from "@/lib/analytics";
 import { FREE_ITEM_LIMIT } from "@/lib/product";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 import { validateItemInput } from "@/lib/validation";
 
 export async function POST(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   const user = await getSessionUser();
   if (!user) return Response.json({ error: "Your session expired. Refresh the page and try again." }, { status: 401 });
 
