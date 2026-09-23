@@ -1,0 +1,24 @@
+{
+  "schema": "second-date-release-status/1",
+  "updated": "2026-09-22",
+  "release": "v1-validation",
+  "gates": {
+    "G0_source": "PASS",
+    "G1_core_hosted_infrastructure": "BLOCKED_EXTERNAL",
+    "G2_core_user_journey": "IMPLEMENTED_AWAITING_HOSTED_E2E",
+    "G3_billing": "IMPLEMENTED_AWAITING_STRIPE_TEST",
+    "G4_reminders": "IMPLEMENTED_AWAITING_EMAIL_TEST",
+    "G5_safety_privacy": "IMPLEMENTED",
+    "G6_operations": "IMPLEMENTED_AWAITING_HOSTED_SMOKE",
+    "G7_validation_launch": "READY_AFTER_G1_G2"
+  },
+  "external_blockers": [
+    "Create a separate Second Date Vercel project",
+    "Provision production PostgreSQL",
+    "Configure DATABASE_URL and APP_URL"
+  ],
+  "optional_feature_activation": [
+    "Stripe test credentials and webhook",
+    "Verified Resend sender and reminder credentials"
+  ]
+}
