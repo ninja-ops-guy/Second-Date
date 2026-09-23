@@ -192,6 +192,23 @@ export function Dashboard() {
     catch (cause) { showToast(cause instanceof Error ? cause.message : "Could not open billing."); }
   }
 
+  function exportData() {
+    window.location.href = "/api/account/export";
+  }
+
+  async function deleteAccount() {
+    const password = window.prompt('Enter your password to delete your account. This cannot be undone.');
+    if (!password) return;
+    const confirmation = window.prompt('Type DELETE to permanently remove your Second Date account and data.');
+    if (confirmation !== "DELETE") { showToast("Account deletion cancelled."); return; }
+    try {
+      await requestJson("/api/account/delete", { method: "DELETE", body: JSON.stringify({ password, confirmation }) });
+      window.location.href = "/";
+    } catch (cause) {
+      showToast(cause instanceof Error ? cause.message : "Could not delete your account.");
+    }
+  }
+
   async function updateReminders(enabled: boolean, leadDays = data?.user.reminderLeadDays ?? 3) {
     try {
       const result = await requestJson<{ user: User }>("/api/reminders/settings", { method: "PATCH", body: JSON.stringify({ enabled, leadDays }) });
@@ -240,6 +257,7 @@ export function Dashboard() {
           <section className="account-section" id="account"><div className="account-heading"><div><p className="section-kicker"><span>✳</span> ACCOUNT &amp; EXTRAS</p><h2>Your space, your way.</h2></div>{!data.user.email && <button className="button button-outline" onClick={() => { setAuthMode("register"); setAuthModal(true); }}>Save this space</button>}</div>
             <div className="account-grid"><article><CircleUserRound/><div><small>ACCOUNT</small><strong>{data.user.email || "Guest"}</strong><p>{data.user.email ? "Your space follows your account." : "Try everything essential before signing up."}</p></div></article><article><Sparkles/><div><small>PLAN</small><strong>{plus ? "Plus ✦" : "Free"}</strong><p>{plus ? "Unlimited timers and thoughtful extras." : `${data.limit} active personal items.`}</p>{plus ? <button className="inline-action" onClick={() => void openBilling()}><CreditCard size={14}/> Manage billing</button> : <button className="inline-action" onClick={() => setUpgradeModal(true)}>See Plus</button>}</div></article></div>
             <div className="extras-grid"><article><Bell/><div><strong>Email reminders</strong><p>Get a nudge before a Second Date, plus one on the day.</p>{plus ? <div className="reminder-controls"><label><input type="checkbox" checked={data.user.reminderEmailEnabled} onChange={(event) => void updateReminders(event.target.checked)}/> {data.user.reminderEmailEnabled ? "On" : "Off"}</label><select value={data.user.reminderLeadDays} onChange={(event) => void updateReminders(data.user.reminderEmailEnabled, Number(event.target.value))}>{REMINDER_OPTIONS.map((days) => <option key={days} value={days}>{days} day{days === 1 ? "" : "s"} before</option>)}</select></div> : <button className="inline-action" onClick={() => setUpgradeModal(true)}>Available with Plus</button>}</div></article><article><Printer/><div><strong>Printable labels</strong><p>Print simple opened and Second Date labels for your shelf.</p><button className="inline-action" onClick={() => plus ? void printLabels() : setUpgradeModal(true)}>{plus ? "Print labels" : "Available with Plus"}</button></div></article><article><History/><div><strong>Use-up insight</strong><p>{used + discarded ? `You used ${used} of ${used + discarded} completed items instead of discarding them.` : "Complete a few items and your use-up pattern will appear here."}</p></div></article></div>
+            {data.user.email && <div className="account-data-controls"><div><strong>Your data</strong><p>Download a copy of your account and item history, or permanently delete your account.</p></div><div><button className="button button-outline button-small" onClick={exportData}>Export data</button><button className="danger-action" onClick={() => void deleteAccount()}>Delete account</button></div></div>}
           </section>
         </div>
       </main>
