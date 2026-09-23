@@ -3,8 +3,11 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { destroySession, getSessionUser, verifyPassword } from "@/lib/auth";
 import { getStripe } from "@/lib/billing";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 
 export async function DELETE(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   const user = await getSessionUser();
   if (!user?.email || !user.passwordHash) return Response.json({ error: "Sign in to delete your account." }, { status: 401 });
 
