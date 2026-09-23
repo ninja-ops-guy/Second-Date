@@ -82,7 +82,7 @@ export default function HomePage() {
         <section className="faq-section section-pad"><div className="page-container faq-grid"><div><p className="section-kicker"><span>04</span> GOOD TO KNOW</p><h2>A few little<br /><em>questions.</em></h2></div><div className="faq-list">{faqs.map(([q,a]) => <details key={q}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}</div></div></section>
         <section className="final-cta page-container"><div><p>YOUR FUTURE SELF SAYS THANK YOU</p><h2>Open it. Date it.<br /><em>Enjoy every last bit.</em></h2><Link href="/app" className="button button-light button-large">Give it a try <ArrowUpRight size={19}/></Link></div><span className="cta-spark">✳</span></section>
       </main>
-      <footer className="site-footer"><div className="page-container footer-top"><div><Brand /><p>A little home for everything you open.<br />Made for making the most of what you have.</p></div><div><a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a><Link href="/app">Open the app</Link></div></div><div className="page-container footer-bottom"><span>© {new Date().getFullYear()} Second Date.</span><span>Use the good stuff ✳</span></div></footer>
+      <footer className="site-footer"><div className="page-container footer-top"><div><Brand /><p>A little home for everything you open.<br />Made for making the most of what you have.</p></div><div><a href="#how-it-works">How it works</a><a href="#pricing">Pricing</a><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/app">Open the app</Link></div></div><div className="page-container footer-bottom"><span>© {new Date().getFullYear()} Second Date.</span><span>Use the good stuff ✳</span></div></footer>
     </div>
   );
 }
