@@ -2,8 +2,11 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { createSession, publicUser, verifyPassword } from "@/lib/auth";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 
 export async function POST(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   let body: { email?: unknown; password?: unknown };
   try {
     body = await request.json();
