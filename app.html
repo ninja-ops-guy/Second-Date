@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#1d4a37" />
+  <meta name="description" content="Second Date browser app" />
+  <title>Your space | Second Date</title>
+  <link rel="stylesheet" href="./pages.css" />
+</head>
+<body data-page="app">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="./"><span class="brand-mark">✳</span><span class="brand-word">second<span>date</span><b>.</b></span></a>
+      <div class="workspace"><span>✳</span><div><b>Your browser space</b><small><span id="active-count">0</span> / 8 active</small></div></div>
+      <nav><button data-tab="active" class="active">◷ Open things</button><button data-tab="history">↺ History</button><a href="#about">◎ About this preview</a></nav>
+      <div class="sidebar-foot"><small>Your data stays in this browser on the GitHub Pages frontend.</small></div>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-topbar"><span>YOUR LITTLE SPACE</span><a href="./">← Home</a></header>
+      <div class="app-content">
+        <section class="app-heading">
+          <div><div class="kicker"><span>✳</span> TODAY</div><h1>Good to see you.</h1><p>A calm little look at what deserves attention next.</p></div>
+          <button class="button button-dark" id="add-button">＋ Add something</button>
+        </section>
+
+        <section class="stats">
+          <div><small>OPEN NOW</small><strong id="stat-open">0</strong><p>things keeping their second clock</p></div>
+          <div><small>COMING UP</small><strong id="stat-soon">0</strong><p>due in the next three days</p></div>
+          <div><small>USED UP</small><strong id="stat-used">0</strong><p>small wins in your history</p></div>
+        </section>
+
+        <section class="app-nudge" id="app-nudge">
+          <span>✳</span><div><small>A GENTLE NUDGE</small><h2 id="nudge-title">Use the good stuff.</h2><p id="nudge-copy">Add something you opened and Second Date will keep the clock visible.</p></div>
+        </section>
+
+        <section class="list-section">
+          <div class="list-toolbar">
+            <div class="tabs"><button data-tab="active" class="active">Open things <b id="tab-active-count">0</b></button><button data-tab="history">History <b id="tab-history-count">0</b></button></div>
+            <label class="search">⌕ <input id="search" placeholder="Search your things" /></label>
+          </div>
+          <div id="example-note" class="example-note" hidden>These are examples. Add your first real item and they’ll quietly disappear.</div>
+          <div class="items" id="items"></div>
+        </section>
+
+        <section class="about-preview" id="about">
+          <div><div class="kicker"><span>✳</span> GITHUB PAGES FRONTEND</div><h2>Fast, private, and fully static.</h2></div>
+          <p>This version uses localStorage, so it works without a server. The repository still contains the Next.js/Postgres/Stripe backend for a future hosted deployment with accounts, sync, billing, and email reminders.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="item-dialog">
+    <form id="item-form" method="dialog" class="modal-form">
+      <div class="modal-head"><div><small id="modal-kicker">A NEW SECOND DATE</small><h2 id="modal-title">What did you open?</h2></div><button type="button" class="circle-button" id="close-dialog">×</button></div>
+      <input type="hidden" id="item-id" />
+      <label>Name<input id="name" maxlength="80" required placeholder="Basil pesto" /></label>
+      <div class="category-buttons" id="categories">
+        <button type="button" data-category="Food" class="selected">Food</button>
+        <button type="button" data-category="Beauty">Beauty</button>
+        <button type="button" data-category="Wellness">Wellness</button>
+        <button type="button" data-category="Home">Home</button>
+      </div>
+      <div class="form-grid">
+        <label>Opened on<input id="opened-at" type="date" required /></label>
+        <label>Use within (days)<input id="days" type="number" min="1" max="3650" value="7" required /></label>
+      </div>
+      <label>Note <small>optional</small><textarea id="note" maxlength="240" placeholder="Perfect for pasta night"></textarea></label>
+      <button class="button button-dark" type="submit">Save to my space</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="./pages.js"></script>
+</body>
+</html>
