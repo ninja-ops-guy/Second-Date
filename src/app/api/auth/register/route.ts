@@ -3,8 +3,11 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { createSession, getSessionUser, hashPassword, publicUser } from "@/lib/auth";
 import { trackEvent } from "@/lib/analytics";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 
 export async function POST(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   let body: { email?: unknown; password?: unknown };
   try {
     body = await request.json();
