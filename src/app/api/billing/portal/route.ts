@@ -1,14 +1,13 @@
 import { getSessionUser } from "@/lib/auth";
 import { getStripe } from "@/lib/billing";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 
 export async function POST(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   const user = await getSessionUser();
-  if (!user?.stripeCustomerId) {
-    return Response.json({ error: "No billing account was found." }, { status: 404 });
-  }
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return Response.json({ error: "Billing is not configured in this preview." }, { status: 503 });
-  }
+  if (!user?.stripeCustomerId) return Response.json({ error: "No billing account was found." }, { status: 404 });
+  if (!process.env.STRIPE_SECRET_KEY) return Response.json({ error: "Billing is not configured in this preview." }, { status: 503 });
 
   try {
     const baseUrl = (process.env.APP_URL || new URL(request.url).origin).replace(/\/$/, "");
