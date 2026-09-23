@@ -1,8 +1,11 @@
 import { getSessionUser } from "@/lib/auth";
 import { getStripe } from "@/lib/billing";
 import { trackEvent } from "@/lib/analytics";
+import { rejectUntrustedBrowserMutation } from "@/lib/request-security";
 
 export async function POST(request: Request) {
+  const rejected = rejectUntrustedBrowserMutation(request);
+  if (rejected) return rejected;
   const user = await getSessionUser();
   if (!user) return Response.json({ error: "Refresh the page and try again." }, { status: 401 });
   if (!user.email) {
@@ -19,11 +22,7 @@ export async function POST(request: Request) {
   }
 
   let body: { interval?: unknown } = {};
-  try {
-    body = await request.json();
-  } catch {
-    // The default monthly plan is used when no body is sent.
-  }
+  try { body = await request.json(); } catch {}
   const interval = body.interval === "year" ? "year" : "month";
   const amount = interval === "year" ? 2400 : 299;
   const baseUrl = (process.env.APP_URL || new URL(request.url).origin).replace(/\/$/, "");
@@ -32,20 +31,18 @@ export async function POST(request: Request) {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            unit_amount: amount,
-            recurring: { interval },
-            product_data: {
-              name: "Second Date Plus",
-              description: "Unlimited open-date timers, email reminders, printable labels, and use-up insights.",
-            },
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          unit_amount: amount,
+          recurring: { interval },
+          product_data: {
+            name: "Second Date Plus",
+            description: "Unlimited open-date timers, email reminders, printable labels, and use-up insights.",
           },
-          quantity: 1,
         },
-      ],
+        quantity: 1,
+      }],
       ...(user.stripeCustomerId ? { customer: user.stripeCustomerId } : { customer_email: user.email }),
       client_reference_id: user.id,
       metadata: { userId: user.id },
