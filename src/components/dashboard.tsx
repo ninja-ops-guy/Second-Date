@@ -96,16 +96,29 @@ export function Dashboard() {
   };
 
   useEffect(() => {
-    void load().then(() => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("signin") === "1") { setAuthMode("login"); setAuthModal(true); }
-      if (params.get("upgrade")) setUpgradeModal(true);
-      if (params.get("checkout") === "success" && params.get("session_id")) {
-        requestJson<{ plan: string }>(`/api/billing/verify?session_id=${encodeURIComponent(params.get("session_id")!)}`)
-          .then(() => { setToast("Welcome to Plus ✦"); void load(); })
-          .catch((cause) => setToast(cause instanceof Error ? cause.message : "Checkout is still syncing."));
-      }
-    });
+    let cancelled = false;
+    requestJson<Bootstrap>("/api/bootstrap")
+      .then((next) => {
+        if (cancelled) return;
+        setData(next);
+        setError("");
+        setLoading(false);
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("signin") === "1") { setAuthMode("login"); setAuthModal(true); }
+        if (params.get("upgrade")) setUpgradeModal(true);
+        if (params.get("checkout") === "success" && params.get("session_id")) {
+          requestJson<{ plan: string }>(`/api/billing/verify?session_id=${encodeURIComponent(params.get("session_id")!)}`)
+            .then(() => { if (!cancelled) { setToast("Welcome to Plus ✦"); void load(); } })
+            .catch((cause) => { if (!cancelled) setToast(cause instanceof Error ? cause.message : "Checkout is still syncing."); });
+        }
+      })
+      .catch((cause) => {
+        if (!cancelled) {
+          setError(cause instanceof Error ? cause.message : "Could not load your space.");
+          setLoading(false);
+        }
+      });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
