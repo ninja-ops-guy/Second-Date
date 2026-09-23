@@ -40,7 +40,7 @@ export async function POST(request: Request) {
             recurring: { interval },
             product_data: {
               name: "Second Date Plus",
-              description: "Unlimited open-date timers, printable labels, and use-up insights.",
+              description: "Unlimited open-date timers, email reminders, printable labels, and use-up insights.",
             },
           },
           quantity: 1,
