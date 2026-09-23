@@ -72,7 +72,11 @@ export async function GET(request: Request) {
       sent += 1;
     } catch (error) {
       if (reservationId) {
-        await db.delete(reminderDigests).where(eq(reminderDigests.id, reservationId)).catch(() => undefined);
+        try {
+          await db.delete(reminderDigests).where(eq(reminderDigests.id, reservationId));
+        } catch {
+          // Best-effort release so a later cron run can retry delivery.
+        }
       }
       failures.push({ userId: user.id, error: error instanceof Error ? error.message : "Unknown reminder failure" });
     }
