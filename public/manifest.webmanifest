@@ -1,1 +1,21 @@
-{"name":"Second Date","short_name":"Second Date","description":"Keep track of the second clock that starts after you open something.","start_url":"/app","display":"standalone","background_color":"#faf9f3","theme_color":"#1d4a37","categories":["lifestyle","food"]}
+{
+  "name": "Second Date",
+  "short_name": "Second Date",
+  "description": "Keep track of the second clock that starts after you open something.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#faf9f3",
+  "theme_color": "#1d4a37",
+  "categories": [
+    "lifestyle",
+    "food"
+  ],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
